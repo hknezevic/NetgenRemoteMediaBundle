@@ -7,7 +7,19 @@ services:
         class: Netgen\Bundle\RemoteMediaBundle\RemoteMedia\Transformation\Registry
 
     netgen_remote_media.variation.resolver:
-        class: Netgen\Bundle\RemoteMediaBundle\RemoteMedia\VariationResolver
+        alias: netgen_remote_media.variation.resolver.siteaccess
+
+    netgen_remote_media.variation.resolver.default:
+        class: Netgen\Bundle\RemoteMediaBundle\RemoteMedia\VariationResolver\VariationResolver
+        arguments:
+            - "@ezpublish.config.resolver"
+            - "%ezpublish.siteaccess.list%"
+        #lazy: true
+        #calls:
+            #- [setVariations, ["$image_variations;netgen_remote_media$"]]
+
+    netgen_remote_media.variation.resolver.siteaccess:
+        class: Netgen\Bundle\RemoteMediaBundle\RemoteMedia\VariationResolver\SiteAccessAwareVariationResolver
         lazy: true
         calls:
             - [setVariations, ["$image_variations;netgen_remote_media$"]]

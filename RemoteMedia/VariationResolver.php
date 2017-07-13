@@ -2,20 +2,8 @@
 
 namespace Netgen\Bundle\RemoteMediaBundle\RemoteMedia;
 
-class VariationResolver
+interface VariationResolver
 {
-    protected $variations = array();
-
-    /**
-     * Dynamic injection of configured transformations
-     *
-     * @param array $variations
-     */
-    public function setVariations($variations = array())
-    {
-        $this->variations = $variations;
-    }
-
     /**
      * Return merged transformations defined for a provided content type and default ones.
      *
@@ -23,26 +11,7 @@ class VariationResolver
      *
      * @return array
      */
-    public function getVariationsForContentType($contentTypeIdentifier)
-    {
-        $defaultVariations = isset($this->variations['default']) ? $this->variations['default'] : array();
-        $contentTypeVariations= isset($this->variations[$contentTypeIdentifier]) ?
-            $this->variations[$contentTypeIdentifier] : array();
+    public function getVariationsForContentType($contentTypeIdentifier);
 
-        return array_merge($defaultVariations, $contentTypeVariations);
-    }
-
-    public function getCroppbableVariations($contentTypeIdentifier)
-    {
-        $variations = $this->getVariationsForContentType($contentTypeIdentifier);
-
-        $croppableVariations = array();
-        foreach ($variations as $variationName => $variationOptions) {
-            if (isset($variationOptions['transformations']['crop'])) {
-                $croppableVariations[$variationName] = $variationOptions;
-            }
-        }
-
-        return $croppableVariations;
-    }
+    public function getCroppableVariations($contentTypeIdentifier);
 }
