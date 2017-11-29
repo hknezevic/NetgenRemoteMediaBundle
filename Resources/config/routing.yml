@@ -1,0 +1,9 @@
+ngrm.ngadmin.cloudinary.index:
+    path: /ngrm/dashboard
+    defaults:
+        _controller: "netgen_remote_media.controller.ngadmin:index"
+
+ngrm.ngadmin.cloudinary.library:
+    path: /ngrm/library
+    defaults:
+        _controller: "netgen_remote_media.controller.ngadmin:library"

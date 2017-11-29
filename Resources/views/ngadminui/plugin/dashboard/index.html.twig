@@ -1,0 +1,61 @@
+{% extends 'NetgenAdminUIBundle::pagelayout.html.twig' %}
+
+{% block content %}
+<div class="context-block ngrm-dashboard">
+    <div id="path">
+
+    </div>
+
+    <div class="box-header">
+        <h1 class="context-title">{{ "ngrm.cloudinary.dashboard.title"|trans }}</h1>
+        <div class="header-mainline">Basic usage and plan information from configured account</div>
+    </div>
+
+    <div class="panel">
+        <h2>{{ "ngrm.cloudinary.dashboard.plan"|trans }}: {{ usage.plan }}</h2>
+
+        <table class="list usage" cellspacing="0">
+            <tbody>
+            <tr>
+                <th width="25%"></th>
+                <th width="25%">Usage</th>
+                <th width="25%">Limit</th>
+                <th width="25%">Percentage used</th>
+            </tr>
+            {% if usage.objects is defined and usage.objects is not empty %}
+            <tr>
+                <td>Media objects</td>
+                <td>{{ usage.objects.usage ~ " (" ~ usage.resources ~ " originals - " ~ usage.derived_resources ~ " derived)" }}</td>
+                <td>{{ usage.objects.limit }}</td>
+                <td>{{ usage.objects.used_percent ~ " %" }}</td>
+            </tr>
+            {% endif %}
+            {% if usage.transformations is defined and usage.transformations is not empty %}
+            <tr>
+                <td>Transformations</td>
+                <td>{{ usage.transformations.usage }}</td>
+                <td>{{ usage.transformations.limit }}</td>
+                <td>{{ usage.transformations.used_percent ~ " %" }}</td>
+            </tr>
+            {% endif %}
+            {% if usage.bandwidth is defined and usage.bandwidth is not empty %}
+                <tr>
+                    <td>Bandwidth</td>
+                    <td>{{ (usage.bandwidth.usage*0.00000095367432)|round(1) ~ " MB" }}</td>
+                    <td>{{ (usage.bandwidth.limit*0.00000095367432)|round(1) ~ " MB" }}</td>
+                    <td>{{ usage.bandwidth.used_percent ~ " %" }}</td>
+                </tr>
+            {% endif %}
+            {% if usage.storage is defined and usage.storage is not empty %}
+                <tr>
+                    <td>Storage</td>
+                    <td>{{ (usage.storage.usage*0.00000095367432)|round(1) ~ " MB" }}</td>
+                    <td>{{ (usage.storage.limit*0.00000095367432)|round(1) ~ " MB" }}</td>
+                    <td>{{ usage.storage.used_percent ~ " %" }}</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

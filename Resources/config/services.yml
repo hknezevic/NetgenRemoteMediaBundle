@@ -42,7 +42,7 @@ services:
     netgen_remote_media.ngadminui.menu_plugin.ngremotemedia:
         class: Netgen\Bundle\RemoteMediaBundle\MenuPlugin\RemoteMediaMenuPlugin
         tags:
-            - { name: "netgen_admin_ui.menu_plugin" }
+            - { name: "netgen_admin_ui.menu_plugin", priority: 10 }
 
     netgen_remote_media.content_browser.backend.cloudinary:
         class: Netgen\Bundle\RemoteMediaBundle\RemoteMedia\Provider\Cloudinary\ContentBrowser\Backend\CloudinaryBackend
@@ -50,3 +50,10 @@ services:
             - "@netgen_remote_media.provider.cloudinary"
         tags:
             -  { name: netgen_content_browser.backend, item_type: cloudinary }
+
+    # @todo: extract to separate yml
+    netgen_remote_media.controller.ngadmin:
+        class: Netgen\Bundle\RemoteMediaBundle\Controller\MenuPluginController
+        calls:
+            - [setContainer, ["@service_container"]]
+            - [initCloudinary, ['%netgen_remote_media.parameters.cloudinary.account_name%', '%netgen_remote_media.parameters.cloudinary.account_key%', "%netgen_remote_media.parameters.cloudinary.account_secret%", "%netgen_remote_media.parameters.use_subdomains%"]]

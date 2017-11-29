@@ -25,10 +25,8 @@ class RemoteMediaMenuPlugin implements MenuPluginInterface
     public function getTemplates()
     {
         return array(
-            'head' => 'NetgenRemoteMediaBundle:ngadminui/plugin:head.html.twig',
-            'aside' => '@NetgenAdminUI/menu/plugins/legacy/aside.html.twig',
-            'left' => '@NetgenAdminUI/menu/plugins/legacy/left.html.twig',
-            'top' => '@NetgenAdminUI/menu/plugins/legacy/top.html.twig',
+            'aside' => 'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:aside.html.twig',
+            'left' => 'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:left.html.twig'
         );
     }
 
@@ -39,7 +37,8 @@ class RemoteMediaMenuPlugin implements MenuPluginInterface
      */
     public function isActive()
     {
-        return false;
+        // @todo: should be active only if provider is Cloudinary
+        return true;
     }
 
     /**
@@ -51,6 +50,8 @@ class RemoteMediaMenuPlugin implements MenuPluginInterface
      */
     public function matches(Request $request)
     {
-        return false;
+        $route = $request->attributes->get('_route');
+
+        return mb_substr($route, 0, strlen('ngrm.ngadmin.cloudinary')) === 'ngrm.ngadmin.cloudinary';
     }
 }

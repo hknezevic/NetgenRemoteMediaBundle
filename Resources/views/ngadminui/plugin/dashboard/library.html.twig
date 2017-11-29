@@ -1,0 +1,33 @@
+{% extends 'NetgenAdminUIBundle::pagelayout.html.twig' %}
+
+{% block content %}
+    <div class="context-block ngrm-library">
+        <div id="path">
+        </div>
+
+        <div class="box-header">
+            <h1 class="context-title">{{ "ngrm.cloudinary.library.title"|trans }}</h1>
+            <div class="header-mainline">
+                <a href="?type=image" class="btn {% if type == 'image' %}btn-primary{% else %}btn-default{% endif %}">Images</a>
+                <a href="?type=video" class="btn {% if type == 'video' %}btn-primary{% else %}btn-default{% endif %}">Videos</a>
+            </div>
+        </div>
+
+        <div class="panel">
+            {% if resources is empty %}
+                No media found.
+            {% endif %}
+
+            {% for resource in resources %}
+                <div class="col-md-2">
+                    <div class="media-item">
+                        <img src="{{ resource.variation }}">
+                        <div class="media-name">{{ resource.public_id }}</div>
+                    </div>
+                </div>
+
+                {% if loop.index % 6 == 0 %}<div class="clearfix"></div>{% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
