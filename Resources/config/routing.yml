@@ -7,3 +7,9 @@ ngrm.ngadmin.cloudinary.library:
     path: /ngrm/library
     defaults:
         _controller: "netgen_remote_media.controller.ngadmin:library"
+
+ngrm.ngadmin.cloudinary.library.load_more:
+    path: /ngrm/library/more
+    defaults:
+        _controller: "netgen_remote_media.controller.ngadmin:loadMore"
+        methods: [POST]

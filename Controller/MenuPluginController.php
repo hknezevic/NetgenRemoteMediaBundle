@@ -5,6 +5,7 @@ namespace Netgen\Bundle\RemoteMediaBundle\Controller;
 use \Cloudinary;
 use \Cloudinary\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class MenuPluginController extends Controller
@@ -50,28 +51,10 @@ class MenuPluginController extends Controller
         );
     }
 
-    public function library(Request $request)
+    private function extractMedia($resources)
     {
-        $type = $request->query->get('type');
-
-        $options = array(
-            'resource_type' => $type
-        );
-
-        $resources = $this->cloudinaryApi->resources($options)->getArrayCopy();
-
-        /*$items = $resources['resources'];
-        while (!empty($resources['next_cursor'])) {
-            $options['next_cursor'] = $resources['next_cursor'];
-            $resources = $this->cloudinaryApi->resources($options)->getArrayCopy();
-
-            if (!empty($resources['resources'])) {
-                $items = array_merge($items, $resources['resources']);
-            }
-        }*/
-
         $media = [];
-        foreach ($resources['resources'] as $resource) {
+        foreach ($resources as $resource) {
             $finalOptions['transformation'] = [
                 'media_lib_thumb'
             ];
@@ -86,12 +69,58 @@ class MenuPluginController extends Controller
             $media[] = $data;
         }
 
+        return $media;
+    }
+
+    public function library(Request $request)
+    {
+        $type = $request->query->get('type', 'image');
+
+        $options = array(
+            'resource_type' => $type,
+            'max_results' => 18
+        );
+
+        $resources = $this->cloudinaryApi->resources($options)->getArrayCopy();
+        $media = $this->extractMedia($resources['resources']);
+
         return $this->render(
             'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:library.html.twig',
             [
+                'next_cursor' => isset($resources['next_cursor']) ? $resources['next_cursor'] : false,
                 'resources' => $media,
                 'type' => $type
             ]
         );
+    }
+
+    public function loadMore(Request $request)
+    {
+        $type = $request->request->get('type', 'image');
+        $nextCursor = $request->request->get('next_cursor');
+
+        $options = [
+            'resource_type' => $type,
+            'max_results' => 18,
+            'next_cursor' => $nextCursor
+        ];
+
+        $resources = $this->cloudinaryApi->resources($options)->getArrayCopy();
+        $media = $this->extractMedia($resources['resources']);
+
+        return new JsonResponse(
+            [
+                'html' => $this->renderView(
+                    'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:library_list.html.twig',
+                    [
+                        'next_cursor' => isset($resources['next_cursor']) ? $resources['next_cursor'] : false,
+                        'resources' => $media,
+                        'type' => $type
+                    ]
+                ),
+                'next_cursor' => isset($resources['next_cursor']) ? $resources['next_cursor'] : false
+            ]
+        );
+
     }
 }

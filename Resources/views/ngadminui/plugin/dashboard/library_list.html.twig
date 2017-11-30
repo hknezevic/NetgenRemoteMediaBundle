@@ -1,0 +1,14 @@
+{% if resources is empty %}
+    No media found.
+{% endif %}
+
+{% for resource in resources %}
+    <div class="col-md-2">
+        <div class="media-item">
+            <img src="{{ resource.variation }}">
+            <div class="media-name">{{ resource.public_id }}</div>
+        </div>
+    </div>
+
+    {% if loop.index % 6 == 0 %}<div class="clearfix"></div>{% endif %}
+{% endfor %}

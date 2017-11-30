@@ -14,20 +14,55 @@
         </div>
 
         <div class="panel">
-            {% if resources is empty %}
-                No media found.
+            <div id="media-listing">
+                {% include 'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:library_list.html.twig' %}
+            </div>
+
+            <div class="clearfix"></div>
+
+            {% if next_cursor %}
+                <div data-nextcursor="{{ next_cursor }}" class="load-more btn btn-primary">Load more</div>
             {% endif %}
-
-            {% for resource in resources %}
-                <div class="col-md-2">
-                    <div class="media-item">
-                        <img src="{{ resource.variation }}">
-                        <div class="media-name">{{ resource.public_id }}</div>
-                    </div>
-                </div>
-
-                {% if loop.index % 6 == 0 %}<div class="clearfix"></div>{% endif %}
-            {% endfor %}
         </div>
     </div>
+
+    <script>
+        $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^]*)').exec(window.location.href);
+            if (results==null){
+                return null;
+            }
+            else{
+                return results[1] || 0;
+            }
+        }
+
+        $(function(){
+            //Put your code here
+            $(".load-more").click(function(){
+                var type = decodeURIComponent($.urlParam('type'));
+                if (type === "null") type='image';
+
+                var next_cursor = $(this).data('nextcursor');
+
+                console.log(type, next_cursor);
+
+                $.ajax({
+                    method: "POST",
+                    url: "{{ path('ngrm.ngadmin.cloudinary.library.load_more') }}",
+                    data: { type: type, next_cursor: next_cursor }
+                }).done(function(data) {
+                    // loadmore?
+                    if (data.next_cursor) {
+                        $(this).data('nextcursor', data.next_cursor);
+                    } else {
+                        $(".load-more").remove();
+                    }
+
+                    $("#media-listing").append(data.html);
+                });
+
+            });
+        });
+    </script>
 {% endblock %}
