@@ -1,0 +1,21 @@
+{% extends 'NetgenAdminUIBundle::pagelayout.html.twig' %}
+
+{% block content %}
+    <div class="context-block ngrm-dashboard">
+        <div id="path">
+
+        </div>
+
+        <div class="box-header">
+            <h1 class="context-title">{{ "ngrm.cloudinary.multiupload.title"|trans }}</h1>
+            <div class="header-mainline">Upload and generate content objects</div>
+        </div>
+
+        <div class="panel">
+            <form action="" method="POST" enctype="multipart/form-data">
+                <input type="file" multiple="multiple" name="file[]" required>
+                <input type="submit" value="Upload">
+            </form>
+        </div>
+    </div>
+{% endblock %}

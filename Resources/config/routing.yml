@@ -13,3 +13,8 @@ ngrm.ngadmin.cloudinary.library.load_more:
     defaults:
         _controller: "netgen_remote_media.controller.ngadmin:loadMore"
         methods: [POST]
+
+ngrm.ngadmin.cloudinary.multiupload:
+    path: /ngrm/multiupload
+    defaults:
+        _controller: "netgen_remote_media.controller.ngadmin:uploadAndGenerate"
