@@ -143,12 +143,16 @@ class MenuPluginController extends Controller
             try {
                 $contentCreateStruct = $contentService->newContentCreateStruct($contentType, $languages[0]);
 
-                $contentCreateStruct->setField('name', $file->getClientOriginalName());
+                $file = $file->move('/tmp', $file->getClientOriginalName());
+
+                $contentCreateStruct->setField('name', $file->getFilename());
                 $contentCreateStruct->setField('image', $file->getRealPath());
 
                 $locationCreateStruct = $locationService->newLocationCreateStruct(51);
                 $draft = $contentService->createContent($contentCreateStruct, array($locationCreateStruct));
-                $createdContent[] = $contentService->publishVersion($draft->versionInfo);
+                $content = $contentService->publishVersion($draft->versionInfo);
+
+                $createdContent[] = $content->id;
             } catch (\Exception $e) {
                 $repository->rollback();
             }
@@ -171,24 +175,27 @@ class MenuPluginController extends Controller
         }
 
         if ($request->getMethod() === 'POST') {
-            $contentObjects = $this->handleFiles($request->files->get('file'));
+            $contentIds = $this->handleFiles($request->files->get('file'));
+            $request->getSession()->set('content_ids', $contentIds);
 
-            // @todo: redirect
-            return $this->render(
-                'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:multiupload_summary.html.twig',
-                [
-                    'content_objects' => $contentObjects
-                ]
-            );
+            return $this->redirectToRoute('ngrm.ngadmin.cloudinary.upload_summary');
         }
 
-        // we need to display multi-upload
-        // each uploaded image will automatically generate new ez content, with title set from the image and image itself set in remote media field
-        // we'll need to limit to max 10 objects probably due to the memory/timeout limits
-
-        // OPTIONAL: configure a way to quickly fill out one more field (description, caption, or something similar)
         return $this->render(
             'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:multiupload.html.twig'
+        );
+    }
+
+    public function uploadSummary(Request $request)
+    {
+        $contentIds = $request->getSession()->get('content_ids');
+        $request->getSession()->remove('content_ids');
+
+        return $this->render(
+            'NetgenRemoteMediaBundle:ngadminui/plugin/dashboard:multiupload_summary.html.twig',
+            [
+                'content_objects' => $contentIds
+            ]
         );
     }
 }

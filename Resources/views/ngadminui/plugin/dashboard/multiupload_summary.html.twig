@@ -3,19 +3,20 @@
 {% block content %}
     <div class="context-block ngrm-dashboard">
         <div id="path">
-
         </div>
 
         <div class="box-header">
             <h1 class="context-title">{{ "ngrm.cloudinary.multiupload.title"|trans }}</h1>
-            <div class="header-mainline">Upload and generate content objects</div>
+            <div class="header-mainline">Here is the list of your uploaded files</div>
         </div>
 
         <div class="panel">
             {% if content_objects is not empty %}
-                {% for content in content_objects %}
-                    <a href="{{ path('ez_urlalias', { 'contentId': content.id }) }}">{{ ez_content_name(content) }}</a>
+                <ul>
+                {% for content_id in content_objects %}
+                    <li><a href="{{ path('ez_urlalias', { 'contentId': content_id }) }}">{{ ngmore_content_name(content_id) }}</a></li>
                 {% endfor %}
+                </ul>
             {% endif %}
         </div>
     </div>

@@ -18,3 +18,8 @@ ngrm.ngadmin.cloudinary.multiupload:
     path: /ngrm/multiupload
     defaults:
         _controller: "netgen_remote_media.controller.ngadmin:uploadAndGenerate"
+
+ngrm.ngadmin.cloudinary.upload_summary:
+    path: /ngrm/multiupload/summary
+    defaults:
+        _controller: "netgen_remote_media.controller.ngadmin:uploadSummary"
