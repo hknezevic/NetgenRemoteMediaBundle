@@ -4,6 +4,9 @@
 ExtensionDirectories[]=ngremotemedia
 AvailableDataTypes[]=ngremotemedia
 
+[ActionSettings]
+ExtensionDirectories[]=ngremotemedia
+
 [CustomTagSettings]
 AvailableCustomTags[]=ngremotemedia
 IsInline[ngremotemedia]=image

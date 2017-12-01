@@ -15,20 +15,43 @@
             <div class="error-message">
             </div>
 
-            <form action="" method="POST" enctype="multipart/form-data">
-                <input type="file" multiple="multiple" id="files" name="file[]" required>
-                <input type="submit" value="Upload">
+            {# @todo: generate proper url #}
+            <form method="post" action="/ngadminui/content/action" id="move">
+                <input type="hidden" name="ContentNodeID" value="2" />
+                <input type="hidden" name="ContentObjectID" value="2" />
+                <input type="hidden" name="ContentObjectLanguageCode" value="" />
+                <input type="submit" name="CustomBrowse" value="Select parent location" />
+            </form>
+
+            <form action="" id="multiupload-form" method="POST" enctype="multipart/form-data">
+                <input type="hidden" required="required" id="plid" name="parentLocationId" {% if app.request.request.has('SelectedNodeIDArray') %}value="{{ app.request.request.get('SelectedNodeIDArray')[0] }}"{% endif %}>
+                <input type="file" multiple="multiple" id="files" name="file[]" required="required" disabled="disabled">
+                <input type="submit" name="submit" value="Upload">
             </form>
         </div>
     </div>
 
     <script>
         $(function(){
-            $('input#files').change(function(){
+            var value = $('#plid').val();
+            var $inputFiles = $('input#files');
+
+            if (value != null && value !== '') {
+                $inputFiles.removeAttr('disabled');
+            }
+
+            $inputFiles.change(function(){
                 var files = $(this)[0].files;
                 if(files.length > 10) {
                     $('.error-message').addClass('alert alert-danger').html('You can select max 10 files');
-                    $("input#files").val('');
+                    $inputFiles.val('');
+                }
+            });
+
+            $('#multiupload-form').submit(function(e){
+                if (value == null) {
+                    e.preventDefault();
+                    $('.error-message').addClass('alert alert-danger').html('Select parent location first!');
                 }
             });
         });

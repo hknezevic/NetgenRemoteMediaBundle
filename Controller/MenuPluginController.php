@@ -124,7 +124,7 @@ class MenuPluginController extends Controller
         );
     }
 
-    private function handleFiles(array $files)
+    private function handleFiles(array $files, $parentLocationId)
     {
         $languages = $this->container->get('ezpublish.config.resolver')->getParameter('languages');
 
@@ -148,7 +148,7 @@ class MenuPluginController extends Controller
                 $contentCreateStruct->setField('name', $file->getFilename());
                 $contentCreateStruct->setField('image', $file->getRealPath());
 
-                $locationCreateStruct = $locationService->newLocationCreateStruct(51);
+                $locationCreateStruct = $locationService->newLocationCreateStruct($parentLocationId);
                 $draft = $contentService->createContent($contentCreateStruct, array($locationCreateStruct));
                 $content = $contentService->publishVersion($draft->versionInfo);
 
@@ -174,8 +174,12 @@ class MenuPluginController extends Controller
             );
         }
 
-        if ($request->getMethod() === 'POST') {
-            $contentIds = $this->handleFiles($request->files->get('file'));
+        // @todo: do some validation
+        if ($request->getMethod() === 'POST' && $request->files->has('file')) {
+            $contentIds = $this->handleFiles(
+                $request->files->get('file'),
+                $request->request->get('parentLocationId')
+            );
             $request->getSession()->set('content_ids', $contentIds);
 
             return $this->redirectToRoute('ngrm.ngadmin.cloudinary.upload_summary');
